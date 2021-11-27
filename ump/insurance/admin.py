@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import *
 from import_export import resources
-from .resources  import BookResource,MrResource
+from .resources import *
 # Register your models here.
 from import_export.admin import ImportExportModelAdmin
 
@@ -14,4 +14,9 @@ class Mr(ImportExportModelAdmin):
     resource_class = MrResource
 
 admin.site.register(Mrcreate, Mr)
+
+class mrcover(ImportExportModelAdmin):
+    resources_class=MCcovernot
+
+admin.site.register(MCcovernoteM,mrcover)
 

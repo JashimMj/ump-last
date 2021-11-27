@@ -15,6 +15,7 @@ import bangla
 import requests
 import urllib.parse
 import ssl
+import cx_Oracle
 def index(request):
     return render(request,'index.html')
 # @login_required(login_url="/Loging/")
@@ -95,11 +96,11 @@ def smsV(request,id=0):
 
 
             username = "admin"
-            password = "admin"
+            password = "jashim"
             messagetype = "SMS:TEXT"
             httpUrl = "http://127.0.0.1:9501/"
             recipient = urllib.parse.quote("+01777705428")
-            messagedata = urllib.parse.quote(f'৳{bangla_premium} গৃহীত ডকুমেন্ট {bangla_doc} {ab} {ddss} ')
+            messagedata = urllib.parse.quote(f'৳{bangla_premium} গৃহীত ডকুমেন্ট {bangla_doc} {ab} {ddss} 😊❤')
 
             sendString = (httpUrl + "api?action=sendmessage" + "&username="
                           + username + "&password="
@@ -139,3 +140,46 @@ def LogingV(request):
 def logoutV (request):
     auth.logout(request)
     return redirect('/')
+
+
+
+def firereV (request):
+    cnx = cx_Oracle.connect('jashim/jashim@//localhost:1521/orcl')
+    mycursor = cnx.cursor()
+    mycursor.execute("""SELECT a.POLICY_NO as POLICY_NO,a.EDATE as EDATE,a.CLIENTCODE as CLIENTCODE,b.PHONE as PHONE,a.CL_NAME as CL_NAME ,b.CLNAME as CLNAME, a.MRNO as MRNO FROM mast a,UW_CLIENT b 
+            WHERE a.C_CLASS ='Fire' AND a.POLICY_NO IS NOT NULL
+            AND a.CLIENTCODE =b.IDNO 
+            AND b.PHONE IS NOT NULL""")
+    dds = mycursor.fetchall()
+    for POLICY_NO,EDATE,CLIENTCODE,PHONE,CL_NAME,CLNAME,MRNO in dds:
+        a=EDATE - datetime.timedelta(days=2)
+        aas=datetime.date.strftime(a,'%Y-%m-%d')
+        b=datetime.date.today()
+        c=datetime.date.strftime(b,'%Y-%m-%d')
+        if aas == c:
+            username = "admin"
+            password = "jashim"
+            messagetype = "SMS:TEXT"
+            httpUrl = "http://127.0.0.1:9501/"
+            recipient = urllib.parse.quote("+01777705428")
+            messagedata = urllib.parse.quote('test')
+
+            sendString = (httpUrl + "api?action=sendmessage" + "&username="
+                          + username + "&password="
+                          + password + "&recipient=" + recipient + "&messagetype=" +
+                          messagetype + "&messagedata=" + messagedata)
+
+            print("Sending html request: " + sendString)
+            requests.packages.urllib3.disable_warnings()
+
+            response = requests.get(sendString, verify=False)
+            print("Http response received: ")
+            print(response.text)
+
+    else:
+            print('message not send')
+
+
+
+
+    return render(request, 'listfire.html', {'dds': dds})
