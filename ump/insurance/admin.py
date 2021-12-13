@@ -20,3 +20,8 @@ class mrcover(ImportExportModelAdmin):
 
 admin.site.register(MCcovernoteM,mrcover)
 
+
+admin.site.register(clinetM)
+
+
+

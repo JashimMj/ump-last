@@ -56,10 +56,11 @@
                             <td>{{x.Vat}}</td>
                             <td>{{x.Stamp}}</td>
                             <td>{{x.ServiceCharge}}</td>
-                            <td>{{x.CoIns_Net}}</td>
-                            <td>{{x.Other}}</td>
+<!--                            <td>{{x.CoIns_Net}}</td>-->
+<!--                            <td>{{x.Other}}</td>-->
                             <td>{{x.Total_amount}}</td>
                             <td><a href="{%url 'sms' x.id%}"class="btn btn-primary" >SMS</a></td>
+                            <td><a href="{%url 'mrno' x.id%}"class="btn btn-primary" target="_blank"><i class="fa fa-print" aria-hidden="true" >MR</i></a></td>
 
                           </tr>
 

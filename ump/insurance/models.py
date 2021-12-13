@@ -98,6 +98,15 @@ class MCcovernoteM(models.Model):
         return self.MR
 
 
+class clinetM(models.Model):
+    clinet_name=models.CharField(max_length=800,null=True,blank=True)
+    Phone=models.CharField(max_length=12,null=True,blank=True)
+    Email=models.CharField(max_length=12,null=True,blank=True)
+
+    def __str__(self):
+        return self.clinet_name
+
+
 
 
 

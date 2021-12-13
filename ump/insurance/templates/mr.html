@@ -12,6 +12,7 @@
 body {
 margin-top: 0px;
 margin-left: 0px;
+
 }
 
 
@@ -148,7 +149,7 @@ text-align:center;
             <td class="tr2 td0"><p class="p1 ft1">&nbsp;</p></td>
 
             <td colspan="3" class="tr2 td8">
-                <p class="p3 ft12" >BIN :
+                <p class="p3 ft12" style="font-size:17px;" >BIN :
                     <nobr>{{x.Bin}}</nobr>
                 </p>
             </td>
@@ -317,7 +318,7 @@ text-align:center;
             <td class="tr3 td46"
                 style="border-top:1px solid black; border-right:1px solid black; border-bottom:1px solid black;"><p
                     class="p8 ft3">{{x.Premium|intcomma}}.00</p></td>
-            <td rowspan="5" style="text-align:right; width:400px; height:400px;">{% qr_from_text urls_name size=38 image_format="png" %}
+            <td rowspan="6" style="text-align:right; width:400px; height:400px; padding-right:28px;">{% qr_from_text urls_name size=38 image_format="png" %}
             </td>
 
         </tr>
@@ -382,8 +383,8 @@ text-align:center;
 
     <p class="p9 ft7">This RECEIPT is computer generated, authorized signature is not required.</p>
     <p class="p10 ft8" style="background-color:#C2C0C0">Receipt valid subject to encashment of cheque/P.O./D.D.</p>
-    <p class="p11 ft9">* Note: If have any complain about Insurance, call +8802
-        <nobr>41051381-84.</nobr>
+    <p class="p11 ft9">* Note: If have any complain about Insurance, call 16130
+        <nobr></nobr>
     </p>
 
 </div>

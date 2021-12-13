@@ -16,6 +16,11 @@ import requests
 import urllib.parse
 import ssl
 import cx_Oracle
+
+def loginV(request):
+    return render(request,'loging.html')
+
+@login_required(login_url="/loging/")
 def index(request):
     return render(request,'index.html')
 # @login_required(login_url="/Loging/")
@@ -24,7 +29,7 @@ def textV(request):
     abc= request.build_absolute_uri
 
     return render(request,'test.html', {'abc':abc})
-@login_required(login_url="/Loging/")
+@login_required(login_url="/loging/")
 def textcreateV(request):
     Name = request.POST.get('name')
     Address = request.POST.get('address')
@@ -45,7 +50,7 @@ def textcreateV(request):
         messages.success(request, 'Data Not Saved')
         return redirect('/')
 
-
+@login_required(login_url="/loging/")
 def CreportV(request,id=0):
     if id !=0:
         urls_name=request.build_absolute_uri
@@ -69,57 +74,66 @@ def CreportV(request,id=0):
         if pisa_status.err:
             return HttpResponse('We had some errors <pre>' + html + '</pre>')
         return response
-@login_required(login_url="/Loging/")
+
+@login_required(login_url="/loging/")
 def abcV(request):
 
     aaa=request.build_absolute_uri
     return render(request,'reporttext.html',{'aaa':aaa})
+
 @login_required(login_url="/Loging/")
 def searchV(request):
     dds = Mrcreate.objects.all()
 
     return render(request,'mrsearch.html',{'dds':dds})
+
+@login_required(login_url="/loging/")
 def mrsearchV(request):
     hd = request.GET.get('mrno')
     dds = Mrcreate.objects.filter(Mr_No=hd)
     return render(request, 'listmr.html', {'dds': dds})
 
+@login_required(login_url="/loging/")
 def smsV(request,id=0):
     if id != 0:
         dds = Mrcreate.objects.filter(pk=id)
-        for x in dds:
-            bangla_premium = bangla.convert_english_digit_to_bangla_digit(x.Premium)
-            ab=bangla.convert_english_digit_to_bangla_digit(x.Date)
-            # fdate = datetime.datetime.strptime(ab,'%Y-%m-%d')
-            bangla_doc = bangla.convert_english_digit_to_bangla_digit(x.Doc_No)
-            ddss = f'http://127.0.0.1:8000/mr/number/{x.id}'
+        for b in dds:
+            clint=clinetM.objects.filter(clinet_name=b.Insured_Name)
+            for c in clint:
+                if c.clinet_name==b.Insured_Name:
+                    for x in dds:
+                        bangla_premium = bangla.convert_english_digit_to_bangla_digit(x.Premium)
+                        ab=bangla.convert_english_digit_to_bangla_digit(x.Date)
+                        # fdate = datetime.datetime.strptime(ab,'%Y-%m-%d')
+                        bangla_doc = bangla.convert_english_digit_to_bangla_digit(x.Doc_No)
+                        ddss = f'http://127.0.0.1:8000/mr/number/{x.id}'
 
 
-            username = "admin"
-            password = "jashim"
-            messagetype = "SMS:TEXT"
-            httpUrl = "http://127.0.0.1:9501/"
-            recipient = urllib.parse.quote("+01777705428")
-            messagedata = urllib.parse.quote(f'৳{bangla_premium} গৃহীত ডকুমেন্ট {bangla_doc} {ab} {ddss} 😊❤')
+                        username = "admin"
+                        password = "jashim"
+                        messagetype = "SMS:TEXT"
+                        httpUrl = "http://127.0.0.1:9501/"
+                        recipient = urllib.parse.quote(c.Phone)
+                        messagedata = urllib.parse.quote(f'৳{bangla_premium} গৃহীত ডকুমেন্ট {bangla_doc} {ab} {ddss}')
 
-            sendString = (httpUrl + "api?action=sendmessage" + "&username="
-                          + username + "&password="
-                          + password + "&recipient=" + recipient + "&messagetype=" +
-                          messagetype + "&messagedata=" + messagedata)
+                        sendString = (httpUrl + "api?action=sendmessage" + "&username="
+                                      + username + "&password="
+                                      + password + "&recipient=" + recipient + "&messagetype=" +
+                                      messagetype + "&messagedata=" + messagedata)
 
-            print("Sending html request: " + sendString)
-            requests.packages.urllib3.disable_warnings()
+                        print("Sending html request: " + sendString)
+                        requests.packages.urllib3.disable_warnings()
 
-            response = requests.get(sendString, verify=False)
-            print("Http response received: ")
-            print(response.text)
-    return redirect('/mrsearch/')
+                        response = requests.get(sendString, verify=False)
+                        print("Http response received: ")
+                        print(response.text)
+    return redirect('/Dashboard/')
 
 
-def LogingV(request):
+def loginsV(request):
     if request.method =='POST':
-        username=request.POST['username']
-        password=request.POST['pass']
+        username=request.POST['name']
+        password=request.POST['password']
         if username == 'Admin':
             a = Mrcreate.objects.all().delete()
         user=auth.authenticate(username=username,password=password)
@@ -133,7 +147,7 @@ def LogingV(request):
                 return redirect('/')
         else:
             messages.info(request,'User is not valide')
-            return redirect('/Loging/')
+            return redirect('/')
     else:
         return render(request,'loging.html')
 
@@ -142,7 +156,7 @@ def logoutV (request):
     return redirect('/')
 
 
-
+@login_required(login_url="/loging/")
 def firereV (request):
     cnx = cx_Oracle.connect('jashim/jashim@//localhost:1521/orcl')
     mycursor = cnx.cursor()
@@ -183,3 +197,30 @@ def firereV (request):
 
 
     return render(request, 'listfire.html', {'dds': dds})
+
+@login_required(login_url="/loging/")
+def mccoverV(request,id=0):
+    if id != 0:
+        urls_name = request.build_absolute_uri
+        info = CompanyInformation.objects.all()
+        gf = Mrcreate.objects.filter(pk=id)
+        mc=MCcovernoteM.objects.filter(pk=id)
+        abc = Mrcreate.objects.raw(
+            'select id,Branch_name,Mr_No,Class,Doc_No,Date,Insured_Name,Insured_Address,Bank_Name,Bank_Address,Premium,Vat,Stamp,ServiceCharge,Total_amount,Mode_Of_Payment from project_mrcreate')
+        template_path = 'marinecovernote.html'
+        context = {'mc':mc}
+        response = HttpResponse(content_type='application/pdf')
+        # for downlode
+        # response['Content-Disposition'] = 'attachment; filename="report.pdf"'
+        response['Content-Disposition'] = 'filename="report.pdf"'
+        # find the template and render it.
+        template = get_template(template_path)
+        html = template.render(context)
+
+        # create a pdf
+        pisa_status = pisa.CreatePDF(
+            html, dest=response)
+        # if error then show some funy view
+        if pisa_status.err:
+            return HttpResponse('We had some errors <pre>' + html + '</pre>')
+        return response
